@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: dolfinx/dolfinx:stable
+
+%files
+    . /opt/statfemx
+
+%post
+    cd /opt/statfemx
+    python3 -m pip install --no-cache-dir --upgrade pip
+    python3 -m pip install --no-cache-dir chaospy scipy numba pytest
+    python3 -m pip install --no-cache-dir -e .
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export OMP_NUM_THREADS=1
+
+%runscript
+    cd /opt/statfemx
+    exec python3 scripts/run_bar1d_full_pipeline.py --backend fenicsx --output bar1d_results.npz
