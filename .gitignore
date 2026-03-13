@@ -21,6 +21,7 @@ env/
 .ruff_cache/
 .tox/
 .nox/
+.ipynb_checkpoints/
 .coverage
 .coverage.*
 htmlcov/
