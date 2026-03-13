@@ -25,6 +25,11 @@ dev = [
   "pytest>=8.2",
   "ruff>=0.6",
 ]
+notebooks = [
+  "ipykernel>=6.29",
+  "jupyterlab>=4.2",
+  "matplotlib>=3.8",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

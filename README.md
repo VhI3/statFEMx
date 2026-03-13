@@ -16,6 +16,7 @@ High-performance Python package for statistical FEM with a FEniCSx-ready workflo
 - `scripts/run_bar1d_full_pipeline.py` full simulation pipeline
 - `scripts/plot_bar1d_prior_uq.py` prior UQ figure
 - `scripts/plot_bar1d_posterior_grid.py` posterior grid figure
+- `notebooks/` Jupyter notebook versions of the examples
 - `docker/Dockerfile` container build recipe
 
 ## Docker Quick Start
@@ -78,6 +79,42 @@ source .venv/bin/activate
 pip install -e .
 mpiexec -n 4 python3 scripts/run_bar1d_full_pipeline.py --backend analytic --obs-case nonlinear --cal-case 7 --output results/case_7.npz
 ```
+
+## Notebook Run
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[notebooks]"
+python -m ipykernel install --user --name statfemx
+jupyter lab
+```
+
+Notebook examples:
+
+- `notebooks/01_bar1d_full_pipeline.ipynb`
+- `notebooks/02_bar1d_prior_uq_plot.ipynb`
+- `notebooks/03_bar1d_posterior_grid.ipynb`
+
+## Notebook Run In Docker
+
+The current image does not install Jupyter by default, so install the notebook extras when the container starts:
+
+```bash
+docker run --rm -it \
+  -p 8888:8888 \
+  -v "$PWD:/work" \
+  statfemx \
+  bash -lc 'cd /work && python3 -m pip install --no-cache-dir -e ".[notebooks]" && jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root'
+```
+
+Then open the URL printed by Jupyter in your browser.
+
+Notes:
+
+- notebooks should be opened from `/work/notebooks`
+- generated `.npz` and `.png` outputs will be written to your mounted local `results/` directory
+- if plotting backend issues appear, add `-e MPLBACKEND=Agg` to the `docker run` command
 
 ## Main CLI options
 
