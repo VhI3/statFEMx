@@ -27,6 +27,8 @@ Build image:
 docker build -t statfemx -f docker/Dockerfile .
 ```
 
+The Docker image is based on `dolfinx/dolfinx:stable` and includes the project package, plotting stack, test tools, and JupyterLab.
+
 Create output directory:
 
 ```bash
@@ -98,14 +100,24 @@ Notebook examples:
 
 ## Notebook Run In Docker
 
-The current image does not install Jupyter by default, so install the notebook extras when the container starts:
+The Docker image already includes JupyterLab and the notebook dependencies.
+
+Before starting Jupyter, make sure the output directories are writable by your host user:
+
+```bash
+mkdir -p results results_notebook
+```
+
+Start JupyterLab from the container with your host UID/GID and an inline matplotlib backend:
 
 ```bash
 docker run --rm -it \
+  --user "$(id -u):$(id -g)" \
   -p 8888:8888 \
   -v "$PWD:/work" \
+  -e MPLBACKEND=module://matplotlib_inline.backend_inline \
   statfemx \
-  bash -lc 'cd /work && python3 -m pip install --no-cache-dir -e ".[notebooks]" && jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root'
+  bash -lc 'cd /work && jupyter lab --ip=0.0.0.0 --port=8888 --no-browser'
 ```
 
 Then open the URL printed by Jupyter in your browser.
@@ -113,8 +125,11 @@ Then open the URL printed by Jupyter in your browser.
 Notes:
 
 - notebooks should be opened from `/work/notebooks`
-- generated `.npz` and `.png` outputs will be written to your mounted local `results/` directory
-- if plotting backend issues appear, add `-e MPLBACKEND=Agg` to the `docker run` command
+- `--user "$(id -u):$(id -g)"` keeps notebook saves owned by your host user instead of `root` or `nobody`
+- `MPLBACKEND=module://matplotlib_inline.backend_inline` ensures `plt.show()` renders inside the notebook
+- if your existing `results/` directory was created by an older container run and is owned by `nobody`, either rename it and recreate it or save notebook outputs to `results_notebook/`
+- generated `.npz` and `.png` outputs will be written to your mounted local `results/` or `results_notebook/` directory
+- the image default `MPLBACKEND=Agg` is still useful for non-interactive script runs; the `docker run` command above overrides it for notebook use
 
 ## Main CLI options
 
