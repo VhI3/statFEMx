@@ -37,7 +37,8 @@ def run_bar1d_pce(
 
     # Quadrature/projection is much more stable here than random regression
     quad_order = config.pce_order + 2
-    nodes, weights = cp.generate_quadrature(quad_order, xi_dist, rule="gaussian")
+    nodes, weights = cp.generate_quadrature(
+        quad_order, xi_dist, rule="gaussian")
     xi_nodes = np.asarray(nodes[0], dtype=float)
     E_nodes = np.exp(lam + zeta * xi_nodes)
 
@@ -59,7 +60,8 @@ def run_bar1d_pce(
     std = np.sqrt(np.maximum(np.diag(covariance), 0.0))
 
     output_xi = np.asarray(
-        xi_dist.sample(config.n_pce_output_samples, rule="random", seed=config.random_seed + 17),
+        xi_dist.sample(config.n_pce_output_samples,
+                       rule="random", seed=config.random_seed + 17),
         dtype=float,
     ).reshape(1, -1)
 
