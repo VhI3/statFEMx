@@ -14,9 +14,11 @@ High-performance Python package for statistical FEM with a FEniCSx-ready workflo
 
 - `src/statFEMx/` core package
 - `scripts/run_bar1d_full_pipeline.py` full simulation pipeline
+- `scripts/run_infinite_plate_2d_linear.py` 2D quarter infinite-plate linear-elastic example
 - `scripts/plot_bar1d_prior_uq.py` prior UQ figure
 - `scripts/plot_bar1d_posterior_grid.py` posterior grid figure
 - `notebooks/` Jupyter notebook versions of the examples
+- `data/infinite_plate_2d/` vendored 2D benchmark mesh and geometry assets
 - `docker/Dockerfile` container build recipe
 
 ## Docker Quick Start
@@ -82,6 +84,12 @@ pip install -e .
 mpiexec -n 4 python3 scripts/run_bar1d_full_pipeline.py --backend analytic --obs-case nonlinear --cal-case 7 --output results/case_7.npz
 ```
 
+Run the deterministic 2D linear-elastic benchmark:
+
+```bash
+python3 scripts/run_infinite_plate_2d_linear.py --output results/infinite_plate_2d_linear.npz
+```
+
 ## Notebook Run
 
 ```bash
@@ -97,6 +105,7 @@ Notebook examples:
 - `notebooks/01_bar1d_full_pipeline.ipynb`
 - `notebooks/02_bar1d_prior_uq_plot.ipynb`
 - `notebooks/03_bar1d_posterior_grid.ipynb`
+- `notebooks/04_infinite_plate_2d_linear.ipynb`
 
 ## Notebook Run In Docker
 

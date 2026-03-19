@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 import numpy as np
 
 
@@ -46,3 +47,47 @@ class Bar1DConfig:
         lam = np.log(mu**2 / np.sqrt(mu**2 + sigma**2))
         zeta = np.sqrt(np.log(1.0 + sigma**2 / mu**2))
         return float(lam), float(zeta)
+
+
+@dataclass(slots=True)
+class InfinitePlate2DConfig:
+    length: float = 4.0
+    height: float = 4.0
+    thickness: float = 1.0
+    hole_radius: float = 0.4
+    youngs_modulus: float = 200.0
+    poisson_ratio: float = 0.25
+    traction: float = 100.0
+    quadrature_order: int = 2
+    boundary_tol: float = 1e-10
+    mesh_file: Path | None = None
+
+    def __post_init__(self) -> None:
+        if self.mesh_file is None:
+            repo_root = Path(__file__).resolve().parents[2]
+            self.mesh_file = repo_root / "data" / "infinite_plate_2d" / "Mesh_infPlate.m"
+
+    @property
+    def lame_lambda(self) -> float:
+        nu = self.poisson_ratio
+        e = self.youngs_modulus
+        return float(nu * e / ((1.0 + nu) * (1.0 - 2.0 * nu)))
+
+    @property
+    def lame_mu(self) -> float:
+        e = self.youngs_modulus
+        nu = self.poisson_ratio
+        return float(e / (2.0 * (1.0 + nu)))
+
+    @property
+    def plane_strain_matrix(self) -> np.ndarray:
+        nu = self.poisson_ratio
+        scale = 1.0 / ((1.0 + nu) * (1.0 - 2.0 * nu))
+        return scale * np.array(
+            [
+                [1.0 - nu, nu, 0.0],
+                [nu, 1.0 - nu, 0.0],
+                [0.0, 0.0, 0.5 - nu],
+            ],
+            dtype=float,
+        )

@@ -3,6 +3,7 @@ FROM dolfinx/dolfinx:stable
 WORKDIR /opt/statfemx
 
 COPY pyproject.toml README.md /opt/statfemx/
+COPY data /opt/statfemx/data
 COPY src /opt/statfemx/src
 COPY scripts /opt/statfemx/scripts
 COPY notebooks /opt/statfemx/notebooks
